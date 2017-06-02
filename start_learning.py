@@ -3,8 +3,9 @@
 from Field import Field
 from QLearner import QLearner
 from OpponentStrategy import OpponentStrategy
-
 from constans import *
+from logger import Logger
+
 
 def printSettings():
     if (USE_SIMILARITIES):
@@ -30,11 +31,12 @@ def main():
 
 
 def qRun():
-    field = Field()
+    logger = Logger()
+    field = Field(logger)
     Q = QLearner('b', ownStatesOnly = True)
     opponentStrategy = OpponentStrategy('a')
     
-    repetition = 3
+    repetition = 4
 
     trainBatchSize = 50
     testBatchSize = 1000
@@ -48,7 +50,7 @@ def qRun():
 
     for i in xrange(1,repetition):
 
-        print "-----------"
+        logger.log("-----------")
         gamesToPlay = gamesToPlayInitial
 
         Q = QLearner('b', ownStatesOnly = True)
@@ -66,8 +68,10 @@ def qRun():
             currentIndex += 1
 
     a_wins_counter = [i/(repetition-1) for i in a_wins_counter]
+    log_msg = "\n"
     for x in a_wins_counter:
-        print x
+        log_msg += '{x_val}\n'.format(x_val=x)
+    logger.log(log_msg)
 
     print Q
 

@@ -5,12 +5,12 @@ from constans import *
 from similarStates import *
 
 class Field():
-    def __init__(self):
+    def __init__(self, logger):
 
         # [A_X,A_Y, B_X,B_Y, BALL_AT_A]
         # [int,int, int,int,  boolean ]
         # self.state = [0,0,FIELD_WIDTH-1,FIELD_HEIGHT-1,1]
-
+        self.__logger = logger
         self.initField()
 
         self.gamesPlayed = 1
@@ -298,9 +298,13 @@ class Field():
 
         if (printStat):
             if ((a_wins_counter+b_wins_counter) > 0):
-                print "A vs B ", ((a_wins_counter)*1.0) / (a_wins_counter+b_wins_counter) , " vs ", (b_wins_counter*1.0) / (a_wins_counter+b_wins_counter),  " draw: ", (game_number - (a_wins_counter+b_wins_counter))*1.0 / batchSize
+                self.__logger.log("A vs B {a_wins} vs {b_wins} draw: {draw}".format(
+                    a_wins=(((a_wins_counter)*1.0) / (a_wins_counter+b_wins_counter)),
+                    b_wins=((b_wins_counter*1.0) / (a_wins_counter+b_wins_counter)),
+                    draw=((game_number - (a_wins_counter+b_wins_counter))*1.0 / batchSize)
+                ))
             else:
-                print "A vs B ", 0 , " vs ", 0,  " draw: ", 1.0
+                self.__logger.log("A vs B 0 vs 0 draw: 1.0")
 
         if ((a_wins_counter+b_wins_counter) > 0):
             return (a_wins_counter)*1.0 / (a_wins_counter+b_wins_counter)
