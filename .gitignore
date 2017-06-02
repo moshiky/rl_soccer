@@ -104,4 +104,5 @@ ENV/
 .idea/
 
 # custom
+logs/
 q_table*
