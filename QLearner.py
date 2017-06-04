@@ -109,7 +109,9 @@ class QLearner():
 
     def calculateError(self, reward, state, action, new_state):
         return \
-            reward + self.shaping_manager.get_shaping_reward(state, action, new_state) \
+            reward \
+            + self.getShapedReward(state, new_state) \
+            + self.shaping_manager.get_shaping_reward(state, action, new_state) \
             + DISCOUNT_FACTOR * self.getValue(new_state, self.getBestAction(new_state)) \
             - self.getValue(state, action)
 
@@ -169,3 +171,26 @@ class QLearner():
         #
         # return output
         return ""
+
+    def getShapedReward(self, state, new_state):
+        return DISCOUNT_FACTOR * self.potentialPhi(new_state) - self.potentialPhi(state)
+
+    def potentialPhi(self, state):
+        myX = state[self.myXPositionIndex]
+        myY = state[self.myYPositionIndex]
+
+        opponentX = state[self.opponentXPositionIndex]
+        opponentY = state[self.opponentYPositionIndex]
+
+        if (state[HAS_BALL_INDEX] == self.iHaveABall):
+            point = self.opponentGatePos[random.randint(0, len(self.opponentGatePos)-1)]
+
+            distanceFromOpponentGate = abs(point[0] - myY) + abs(point[1] - myX)
+
+            return 1.0 / distanceFromOpponentGate
+        else:
+            point = [opponentY,opponentX]
+
+            distanceFromOpponent = abs(point[0] - myY) + abs(point[1] - myX)
+
+            return -1.0 * distanceFromOpponent / (FIELD_WIDTH+FIELD_HEIGHT-3)
