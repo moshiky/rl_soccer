@@ -36,48 +36,50 @@ def qRun():
     Q = QLearner('b', ownStatesOnly = True)
     opponentStrategy = OpponentStrategy('a')
     
-    repetition = 4
+    repetition = 10000
 
     trainBatchSize = 50
-    testBatchSize = 1000
+    testBatchSize = 10000
     gamesToPlayInitial = 1000
 
+    train_stats = list()
 
     field.test(Q, opponentStrategy, testBatchSize)
 
-    a_wins_counter = [0]*int(gamesToPlayInitial / trainBatchSize)
+    b_wins_counter = [0]*int(gamesToPlayInitial / trainBatchSize)
 
-
-    for i in xrange(1,repetition):
-
-        logger.log("-----------")
+    for i in range(repetition):
+        train_stats.append([0]*int(gamesToPlayInitial / trainBatchSize))
+        logger.log("--- rep {0} ---".format(i))
         gamesToPlay = gamesToPlayInitial
 
         Q = QLearner('b', ownStatesOnly = True)
 
         currentIndex = 0
 
-        while (gamesToPlay > 0):
+        while gamesToPlay > 0:
 
-            field.train(Q, opponentStrategy, trainBatchSize, trainMode = True, printStat = False, printGame = False)
+            logger.log('-- train')
+            train_stats[i][currentIndex] += \
+                field.train(Q, opponentStrategy, trainBatchSize, trainMode=True, printStat=True, printGame=False)
 
-            a_wins_counter[currentIndex] += field.test(Q, opponentStrategy, testBatchSize)
+            logger.log('-- test')
+            b_wins_counter[currentIndex] += field.test(Q, opponentStrategy, testBatchSize)
 
             gamesToPlay -= trainBatchSize
-
             currentIndex += 1
 
-    a_wins_counter = [i/(repetition-1) for i in a_wins_counter]
-    log_msg = "\n"
-    for x in a_wins_counter:
-        log_msg += '{x_val}\n'.format(x_val=x)
-    logger.log(log_msg)
+    train_stats = map(lambda r: r/float(repetition), train_stats)
+    b_wins_counter = map(lambda r: r/float(repetition), b_wins_counter)
 
-    print Q
+    logger.log('train mean: ' + ','.join(map(str, train_stats)))
+    logger.log('eval mean: ' + ','.join(map(str, b_wins_counter)))
 
-    import pickle
-    with open('q_table3', 'wb') as f:
-        pickle.dump( Q, f)
+    # print Q
+
+    # import pickle
+    # with open('q_table3', 'wb') as f:
+    #     pickle.dump( Q, f)
 
 if __name__ == '__main__':
     main()

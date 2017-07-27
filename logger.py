@@ -13,7 +13,7 @@ class Logger:
 
         self.__log_file_name = \
             Logger.LOGGING_FILE_PATH_FORMAT.format(timestamp=time.strftime('%d_%m_%Y__%H_%M_%S'))
-        self.log('Logger created', should_print=False)
+        self.log('Logger created', should_print=True)
 
     def error(self, msg):
         self.log('ERROR: {msg}'.format(msg=msg))

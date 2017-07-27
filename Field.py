@@ -296,18 +296,20 @@ class Field():
 
             game_number += 1
 
-        if (printStat):
-            if ((a_wins_counter+b_wins_counter) > 0):
-                self.__logger.log("A vs B {a_wins} vs {b_wins} draw: {draw}".format(
-                    a_wins=(((a_wins_counter)*1.0) / (a_wins_counter+b_wins_counter)),
-                    b_wins=((b_wins_counter*1.0) / (a_wins_counter+b_wins_counter)),
-                    draw=((game_number - (a_wins_counter+b_wins_counter))*1.0 / batchSize)
-                ))
+        if printStat:
+            if (a_wins_counter + b_wins_counter) > 0:
+                self.__logger.log(float(b_wins_counter) / (a_wins_counter + b_wins_counter))
+                # self.__logger.log("A vs B {a_wins} vs {b_wins} draw: {draw}".format(
+                #     a_wins=(((a_wins_counter)*1.0) / (a_wins_counter+b_wins_counter)),
+                #     b_wins=((b_wins_counter*1.0) / (a_wins_counter+b_wins_counter)),
+                #     draw=((game_number - (a_wins_counter+b_wins_counter))*1.0 / batchSize)
+                # ))
             else:
-                self.__logger.log("A vs B 0 vs 0 draw: 1.0")
+                self.__logger.log(0)
+                # self.__logger.log("A vs B 0 vs 0 draw: 1.0")
 
-        if ((a_wins_counter+b_wins_counter) > 0):
-            return (a_wins_counter)*1.0 / (a_wins_counter+b_wins_counter)
+        if (a_wins_counter + b_wins_counter) > 0:
+            return float(b_wins_counter) / (a_wins_counter + b_wins_counter)
         else:
             return 0.0
 

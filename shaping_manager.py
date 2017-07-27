@@ -1,3 +1,21 @@
+def has_ball(state, player):
+    """
+    Tell if the given player has the ball in the given state
+    :param state: the state
+    :param player: "A" for A, anything else for B
+    :return: True or False
+    """
+    a_has_the_ball = state[4]
+    return bool(a_has_the_ball ^ (player == "A"))
+
+
+def manhattan_dist_between_players(state):
+    return abs(state[0]-state[2]) + abs(state[1]-state[3])
+
+
+def manhattan_dist_from_left_gate(state):
+    return state[0]+state[1], state[2]+state[3]
+
 
 class ShapingManager:
 
@@ -28,6 +46,26 @@ class ShapingManager:
         shaping_reward = 0
 
         # *** Your code begins here *** #
+        if has_ball(previous_state, "B") and has_ball(current_state, "A"):
+            return -0.025
+
+        if has_ball(previous_state, "A") and has_ball(current_state, "B"):
+            return 0.025
+
+        prev_a_dist, prev_b_dist = manhattan_dist_from_left_gate(previous_state)
+        curr_a_dist, curr_b_dist = manhattan_dist_from_left_gate(current_state)
+        prev_dist = manhattan_dist_between_players(previous_state)
+        curr_dist = manhattan_dist_between_players(current_state)
+        if has_ball(current_state, "A"):
+            # 1. A has the ball and is closer to left gate = almost certain loss
+            if curr_a_dist < curr_b_dist:
+                return -0.075
+            # 2. A has the ball, but action gets B closer to A = good
+            if curr_dist < prev_dist:
+                return 0.05
+        else:
+            if curr_b_dist < curr_a_dist:
+                return -0.05
 
         # *** Your code end *********** #
 
