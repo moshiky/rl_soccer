@@ -36,7 +36,7 @@ def qRun():
     Q = QLearner('b', ownStatesOnly = True)
     opponentStrategy = OpponentStrategy('a')
     
-    repetition = 10000
+    repetition = 1000
 
     trainBatchSize = 50
     testBatchSize = 10000
